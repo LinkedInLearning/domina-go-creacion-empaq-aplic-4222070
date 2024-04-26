@@ -45,8 +45,15 @@ var getCmd = &cobra.Command{
 			log.Fatalf("failed to get pokemon: %v", err)
 		}
 
-		for _, p := range pokemons.Pokemon {
-			fmt.Println(p.Pokemon.Name)
+		p := ""
+		prompt = &survey.Select{
+			Message: "¿Qué tipo de Pokémon buscas?",
+			Options: pokemons,
+		}
+		survey.AskOne(prompt, &p)
+
+		if err := getPokemon(p); err != nil {
+			log.Fatalf("failed to get pokemon: %v", err)
 		}
 	},
 }
@@ -69,7 +76,7 @@ func getTypes() ([]pokemon.Type, error) {
 	return search.Results, nil
 }
 
-func getPokemonsByType(t string) (*pokemon.PokemonByType, error) {
+func getPokemonsByType(t string) ([]string, error) {
 	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/type/%s", t))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get pokemon: %w", err)
@@ -84,5 +91,29 @@ func getPokemonsByType(t string) (*pokemon.PokemonByType, error) {
 	var search pokemon.PokemonByType
 	json.Unmarshal(body, &search)
 
-	return &search, nil
+	var pokemons []string
+	for _, p := range search.Pokemon {
+		pokemons = append(pokemons, p.Pokemon.Name)
+	}
+
+	return pokemons, nil
+}
+
+func getPokemon(name string) error {
+	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%s", name))
+	if err != nil {
+		return fmt.Errorf("failed to get pokemon: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	var pokemon pokemon.Pokemon
+	json.Unmarshal(body, &pokemon)
+	fmt.Printf("%s, I choose you!\n", pokemon.Name)
+
+	return nil
 }
