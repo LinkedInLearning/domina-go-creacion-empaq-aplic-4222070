@@ -11,10 +11,13 @@ func Logging() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t := time.Now()
 		log.Println("Request received")
+
+		count := c.MustGet(RequestCountKey).(int)
+
 		c.Next()
 
 		latency := time.Since(t)
 		status := c.Writer.Status()
-		log.Printf("Request completed - HTTP Status: %d, in %v\n", status, latency)
+		log.Printf("Request #%d - HTTP Status: %d, in %v\n", count, status, latency)
 	}
 }

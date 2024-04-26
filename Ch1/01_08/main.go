@@ -22,7 +22,7 @@ func main() {
 }
 
 func initializeMiddleware(r *gin.Engine) {
-	r.Use(middleware.Logging(), middleware.AuthToken(), middleware.Error())
+	r.Use(middleware.Counter(), middleware.Logging(), middleware.AuthToken(), middleware.Error())
 }
 
 func initializeRoutes(r *gin.Engine) {
