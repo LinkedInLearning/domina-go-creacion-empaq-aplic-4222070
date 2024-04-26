@@ -22,7 +22,14 @@ func main() {
 }
 
 func initializeMiddleware(r *gin.Engine) {
-	r.Use(middleware.Counter(), middleware.Logging(), middleware.AuthToken(), middleware.Error())
+	// the order of the middleware is important,
+	// as they will be executed in the order they are registered
+	r.Use(
+		middleware.Counter(),
+		middleware.Logging(),
+		middleware.AuthToken(),
+		middleware.Error(),
+	)
 }
 
 func initializeRoutes(r *gin.Engine) {
