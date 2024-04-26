@@ -59,7 +59,7 @@ var getCmd = &cobra.Command{
 }
 
 func getTypes() ([]pokemon.Type, error) {
-	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/type"))
+	resp, err := http.Get("https://pokeapi.co/api/v2/type")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get pokemon: %w", err)
 	}
