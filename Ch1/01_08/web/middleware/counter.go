@@ -25,6 +25,7 @@ func Counter() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		count.Increment()
 
+		// Set the request count in the context for later use
 		ctx.Set(RequestCountKey, count.count)
 
 		ctx.Next()
