@@ -1,4 +1,4 @@
-module github.com/linkedinlearning/domina-go/web
+module github.com/linkedinlearning/domina-go/service
 
 go 1.21.7
 

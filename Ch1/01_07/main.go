@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/linkedinlearning/domina-go/web/web"
+	"github.com/linkedinlearning/domina-go/service/web"
 )
 
 func main() {

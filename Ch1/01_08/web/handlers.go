@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/linkedinlearning/domina-go/web/pokemon"
-	pokerror "github.com/linkedinlearning/domina-go/web/web/error"
+	"github.com/linkedinlearning/domina-go/service/pokemon"
+	pokerror "github.com/linkedinlearning/domina-go/service/web/error"
 )
 
 func GetPokemon(ctx *gin.Context) {

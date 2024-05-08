@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	pokerror "github.com/linkedinlearning/domina-go/web/web/error"
+	pokerror "github.com/linkedinlearning/domina-go/service/web/error"
 )
 
 func AuthToken() gin.HandlerFunc {

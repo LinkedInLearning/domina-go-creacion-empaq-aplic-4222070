@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	pokerror "github.com/linkedinlearning/domina-go/web/web/error"
+	pokerror "github.com/linkedinlearning/domina-go/service/web/error"
 )
 
 func Error() gin.HandlerFunc {

@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/linkedinlearning/domina-go/web/web"
-	"github.com/linkedinlearning/domina-go/web/web/middleware"
+	"github.com/linkedinlearning/domina-go/service/web"
+	"github.com/linkedinlearning/domina-go/service/web/middleware"
 )
 
 func main() {
