@@ -47,7 +47,7 @@ var getCmd = &cobra.Command{
 
 		p := ""
 		prompt = &survey.Select{
-			Message: "¿Qué tipo de Pokémon buscas?",
+			Message: "Elige un Pokémon de la lista:",
 			Options: pokemons,
 		}
 		survey.AskOne(prompt, &p)
