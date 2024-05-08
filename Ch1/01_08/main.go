@@ -10,6 +10,12 @@ import (
 )
 
 func main() {
+	if err := run(); err != nil {
+		log.Fatalf("Error running the server: %v", err)
+	}
+}
+
+func run() error {
 	requiredToken := os.Getenv("API_TOKEN")
 
 	// We want to make sure the server token is set, bail if not
@@ -26,7 +32,7 @@ func main() {
 	initializeRoutes(r)
 
 	// By default, it listens on :8080
-	r.Run()
+	return r.Run()
 }
 
 func initializeMiddleware(r *gin.Engine) {

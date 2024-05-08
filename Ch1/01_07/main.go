@@ -1,11 +1,19 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/linkedinlearning/domina-go/web/web"
 )
 
 func main() {
+	if err := run(); err != nil {
+		log.Fatalf("Error running the server: %v", err)
+	}
+}
+
+func run() error {
 	// Creates a router with default middleware:
 	// logger and recovery (crash-free) middleware
 	r := gin.Default()
@@ -13,7 +21,7 @@ func main() {
 	initializeRoutes(r)
 
 	// By default, it listens on :8080
-	r.Run()
+	return r.Run()
 }
 
 func initializeRoutes(r *gin.Engine) {
