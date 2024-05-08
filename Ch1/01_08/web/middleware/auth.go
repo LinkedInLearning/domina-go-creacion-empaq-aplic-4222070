@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"os"
 
@@ -11,11 +10,6 @@ import (
 
 func AuthToken() gin.HandlerFunc {
 	requiredToken := os.Getenv("API_TOKEN")
-
-	// We want to make sure the server token is set, bail if not
-	if requiredToken == "" {
-		log.Fatal("Please set API_TOKEN environment variable")
-	}
 
 	return func(ctx *gin.Context) {
 		// read the token from the Authorization header

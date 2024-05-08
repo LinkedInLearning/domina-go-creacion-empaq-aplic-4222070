@@ -1,12 +1,22 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/linkedinlearning/domina-go/web/web"
 	"github.com/linkedinlearning/domina-go/web/web/middleware"
 )
 
 func main() {
+	requiredToken := os.Getenv("API_TOKEN")
+
+	// We want to make sure the server token is set, bail if not
+	if requiredToken == "" {
+		log.Fatal("Please set API_TOKEN environment variable")
+	}
+
 	// Creates a router with default middleware:
 	// logger and recovery (crash-free) middleware
 	r := gin.Default()
