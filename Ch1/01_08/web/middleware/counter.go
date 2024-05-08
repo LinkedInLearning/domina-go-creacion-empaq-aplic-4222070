@@ -17,6 +17,7 @@ func (c *Count) Increment() {
 	c.count++
 }
 
+// count es una variable global que se incrementa con cada petición
 var count Count
 
 const RequestCountKey = "requestCount"
@@ -25,7 +26,7 @@ func Counter() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		count.Increment()
 
-		// Set the request count in the context for later use
+		// Añadimos el valor del contador a la petición
 		ctx.Set(RequestCountKey, count.count)
 
 		ctx.Next()

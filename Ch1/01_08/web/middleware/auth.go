@@ -12,16 +12,17 @@ func AuthToken() gin.HandlerFunc {
 	requiredToken := os.Getenv("API_TOKEN")
 
 	return func(ctx *gin.Context) {
-		// read the token from the Authorization header
+		// el token debe ser pasado en el header de la petición
 		token := ctx.Request.Header.Get("Authorization")
 
+		// si no hay token, devolvemos un error
 		if token == "" {
 			err := pokerror.NewHttpError("API token required", "You must pass the api_token", http.StatusUnauthorized)
 			ctx.Error(err)
 			return
 		}
 
-		// compare the token from the header with the server token
+		// si el token no coincide con el esperado, devolvemos un error
 		if token != requiredToken {
 			err := pokerror.NewHttpError("Invalid API token", "You must pass a valid api_token", http.StatusUnauthorized)
 			ctx.Error(err)

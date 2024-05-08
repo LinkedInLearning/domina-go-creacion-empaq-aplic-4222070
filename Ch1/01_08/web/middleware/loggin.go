@@ -12,7 +12,7 @@ func Logging() gin.HandlerFunc {
 		t := time.Now()
 		log.Println("Request received")
 
-		// retrieve the request count from the context
+		// Recuperamos el contador de peticiones
 		count := c.MustGet(RequestCountKey).(int)
 
 		c.Next()
