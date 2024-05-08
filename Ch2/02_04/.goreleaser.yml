@@ -64,6 +64,32 @@ builds:
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.author=mdelapenya
 
+# Crear imágenes de Docker para el proyecto
+dockers:
+  - id: default
+    image_templates:
+      - "mdelapenya/pkmcli:latest"
+      - "mdelapenya/pkmcli:{{ .Version }}"
+      - "mdelapenya/pkmcli:{{ .Tag }}"
+      - "mdelapenya/pkmcli:v{{ .Major }}"
+      - "gcr.io/mdelapenya/pkmcli:latest"
+    # GOOS of the built binaries/packages that should be used.
+    # Default: 'linux'
+    goos: linux
+    # GOARCH of the built binaries/packages that should be used.
+    # Default: 'amd64'
+    goarch: amd64
+    # Es posible no hacer push de la imagen en el proceso de release.
+    # Lo habitual es no saltarse este paso.
+    skip_push: false
+    # Flags para añadir metadatos a la imagen de Docker en formato de labels.
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
 universal_binaries:
   # Al generar el binario universal de MacOS, no eliminará las versiones
   # de ARM y AMD, dejando las 3 versiones.
