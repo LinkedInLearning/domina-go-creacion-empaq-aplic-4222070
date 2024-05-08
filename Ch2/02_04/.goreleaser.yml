@@ -1,0 +1,209 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 1
+
+# Nombre del projecto y de los binarios
+project_name: pkmcli
+
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod tidy
+
+# Si pasamos el flag "--snapshot" a Goreleaser, no publicaremos nada
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+gomod:
+  proxy: true
+
+# Indicará el tamaño de los binarios/paquetes.
+report_sizes: true
+
+git:
+  # Tags que GoReleaser va a ignorar
+  # GoReleaser no cogerá las tags que coincidan.
+  # En este caso, si no es nightly, ignorará la tag nightly.
+  ignore_tags:
+    - "{{ if not .IsNightly }}nightly{{ end }}"
+
+metadata:
+  # Añade el timestamp al binario final. Ayuda a que el build
+  # sea reproducible.
+  mod_timestamp: "{{ .CommitTimestamp }}"
+
+# Produce los binarios de la aplicación, creando una matriz con los
+# valores de goos y goarch.
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+      - ppc64
+    goarm:
+      - "7"
+    # Ignora las siguientes combinaciones de la matriz.
+    ignore:
+      - goos: windows
+        goarch: arm
+    # Añade el timestamp al binario final. Ayuda a que el build
+    # sea reproducible.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    # Linker flags de Go, permite cambiar valores en tiempo de build.
+    # En este caso
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.author=mdelapenya
+
+universal_binaries:
+  # Al generar el binario universal de MacOS, no eliminará las versiones
+  # de ARM y AMD, dejando las 3 versiones.
+  - replace: false
+
+# Para que los usuarios validen que los archivos son correctos con la release.
+checksum:
+  name_template: "checksums.txt"
+
+# Goreleaser permite modificar el texto de las release notes en Github, incluyendo
+# los commits 
+changelog:
+  sort: asc
+  # implementación de las release notes en Github
+  use: github
+  filters:
+    exclude:
+      - "^test:"
+      - "^test\\("
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  # Agrupa los mensajes de commit en función de unas expresiones regulares.
+  # Además establece un orden de prioridad, de modo que sin un mensaje de commit
+  # satisface varias expresiones regulares, se aplique a la que tenga un orden
+  # menor.
+  groups:
+    - title: Dependency updates
+      # Comienza por feat, fix o chore, y tiene (deps). Ej: chore(deps): bump Go
+      regexp: '^.*?(feat|fix|chore)\(deps\)!?:.+$'
+      order: 300
+    - title: "New Features"
+      # Comienza por feat. Ej: feat(module.a): add foo
+      # El mensaje "feat(deps): bump" caerá en esta categoría, y no la de "Dependency Updates"
+      # porque tiene más prioridad (un orden menor).
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
+      order: 100
+    - title: "Security updates"
+      # Comienza por sec. Ej: sec: add foo
+      regexp: '^.*?sec(\(.+\))??!?:.+$'
+      order: 150
+    - title: "Bug fixes"
+      # Comienza por fix o refactor. Ej: fix(modules.b): evaluate first
+      regexp: '^.*?(fix|refactor)(\(.+\))??!?:.+$'
+      order: 200
+    - title: "Documentation updates"
+      # Comienza por docs. Ej: docs(modules.a): include new section header
+      regexp: ^.*?docs?(\(.+\))??!?:.+$
+      order: 400
+    - title: "Housekeeping"
+      # Comienza por chore. Ej: chore(modules.b): refactor variable names
+      regexp: ^chore:.+$
+      order: 400
+    - title: "Build process updates"
+      # Comienza por build o ci. Ej: build(modules.b): include env vars in build
+      regexp: ^.*?(build|ci)(\(.+\))??!?:.+$
+      order: 500
+    - title: Other work
+      # Resto de commits que no satisfacen las expresiones regulares
+      order: 9999
+
+archives:
+  - name_template: >-
+      {{- .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+    # Sobreescribe la extensión del archivo en base a un criterio.
+    # Normalmente utilizado para archivos ZIP en Windows.
+    format_overrides:
+      - goos: windows
+        # Opciones válidas: `tar.gz`, `tgz`, `tar.xz`, `txz`, tar`, `gz`, `zip`, `binary`, y `none`.
+        format: zip
+    # Información de archivo para todos los binarios producidos.
+    builds_info:
+      group: root
+      owner: root
+    # Archivos adicionales que incluir en los empaquetados
+    files:
+      - README.md
+      - LICENSE
+
+# En el caso de querer distribuir la aplicación a través de brew para MacOS.
+brews:
+  # brew necesita de un repositorio en el que alojar la fórmula
+  - repository:
+      owner: mdelapenya
+      name: homebrew-pokemoncli-tap
+      # Es necesario configurar el proceso de release para incluir este secreto.
+      # Para el caso de Github, la cuenta del usuario produciendo la release
+      # define el secreto y su valor, para ser consumido por el repositorio
+      # donde se ejecuta la release, no el tap, y debe por tanto añadir este token,
+      # en este caso como una variable de entorno (o secret) y así evitar sea revelado.
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    # Directorio en el repositorio de la fórmula. Es un convenio de Homebrew.
+    directory: Formula
+    # Versión de 32-bits de ARM, para definir GOARM.
+    goarm: "7"
+    description: Elige tu Pokémon!
+    license: MIT
+    # Para probar la fórmula
+    test: |
+      system "#{bin}/pkm -v"
+    # Fórmulas de brew que son necesarias u opcionales para instalar este proeycto.
+    # En este caso, ninguna es necesaria, y se han dejado aquí de manera ilustrativa.
+    dependencies:
+      - name: go
+        type: optional
+      - name: git
+
+# Crea SBOMs para todos los archivos, utilizando syft.
+# Por tanto, syft debe estar instalado en el proceso de release.
+sboms:
+  - artifacts: archive
+
+# Permite customizar la release de Github
+release:
+  name_template: "v{{ .Version }}"
+  # En este caso estamos añadiendo un footer a la release, incluyendo un link a todos los cambios introducidos en esta release.
+  footer: |
+    **Full Changelog**: https://github.com/mdelapenya/pokemoncli/compare/{{ .PreviousTag }}...{{ if .IsNightly }}nightly{{ else }}{{ .Tag }}{{ end }}
+
+# Es posible anunciar la release en redes sociales
+announce:
+  # Puedes anunciar en Twitter, pero desde el 9 de Febrero de 2023 es de pago. Para configurarlo,
+  # necesitas crear una app en Twitter, y añadir las siguientes variables de entorno al proceso
+  # de release: TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET
+  twitter:
+    enabled: false
+    message_template: "PokemonCLI {{ .Tag }} is out! Check it out: https://github.com/mdelapenya/pokemoncli/releases/tag/{{ .Tag }}"
+  
+  # Para anunciar en Mastodon necesitas crear una app en Mastodon con permisos de escritura de estados.
+  # Además, el proceso de release debe incluir las siguientes variables de entorno:
+  # MASTODON_CLIENT_ID, MASTODON_CLIENT_SECRET, MASTODON_ACCESS_TOKEN.
+  mastodon:
+    enabled: false
+    message_template: 'Awesome project {{.Tag}} is out!'
+    # URL del servidor de Mastodon.
+    server: https://mastodon.social
