@@ -10,7 +10,6 @@ func main() {
 	// logger and recovery (crash-free) middleware
 	r := gin.Default()
 
-	// Set up custom routes
 	initializeRoutes(r)
 
 	// By default, it listens on :8080

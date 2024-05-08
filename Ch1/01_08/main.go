@@ -11,10 +11,8 @@ func main() {
 	// logger and recovery (crash-free) middleware
 	r := gin.Default()
 
-	// Set up middleware
 	initializeMiddleware(r)
 
-	// Set up custom routes
 	initializeRoutes(r)
 
 	// By default, it listens on :8080
@@ -22,13 +20,11 @@ func main() {
 }
 
 func initializeMiddleware(r *gin.Engine) {
-	// the order of the middleware is important,
-	// as they will be executed in the order they are registered
 	r.Use(
-		middleware.Counter(),
-		middleware.Logging(),
-		middleware.AuthToken(),
-		middleware.Error(),
+		middleware.Counter(),   // contador de peticiones
+		middleware.Logging(),   // log de peticiones
+		middleware.AuthToken(), // autenticación
+		middleware.Error(),     // manejo de errores
 	)
 }
 
