@@ -7,7 +7,7 @@ CLI=pkmcli
 
 # build the Go project as a Docker image
 build:
-	goreleaser release --snapshot --rm-dist -f .goreleaser.ym
+	goreleaser release --snapshot --rm-dist -f .goreleaser.yml
 
 # ------------------------------------------
 
