@@ -55,8 +55,8 @@ darwin: darwin-amd64 darwin-arm64
 
 # ------------------------------------------
 
-# build the Go project for all OS
-build-all: clean-dist dist linux windows darwin
+# build the Go project for all OS, and Docker
+build-all: clean-dist dist linux windows darwin docker-build
 
 # ------------------------------------------
 
