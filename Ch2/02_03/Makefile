@@ -60,7 +60,7 @@ build-all: clean-dist dist linux windows darwin
 
 # ------------------------------------------
 
-DOCKER_IMAGE_NAME=linkedinglearning/pkm
+DOCKER_IMAGE_NAME=linkedinlearning/pkm
 DOCKER_IMAGE_TAG=latest
 
 # ------------------------------------------
