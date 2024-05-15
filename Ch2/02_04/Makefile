@@ -11,9 +11,17 @@ build:
 
 # ------------------------------------------
 
+# run the Go project from the binary (only for MacOS AMD)
+run-cli-amd64:
+	@./$(DIST_DIR)/$(CLI)_darwin_amd64_v1/$(CLI) get
+
 # run the Go project from the binary (only for MacOS ARM)
-run-cli:
+run-cli-arm64:
 	@./$(DIST_DIR)/$(CLI)_darwin_arm64/$(CLI) get
+
+# run the Go project from the universal binary 
+run-cli-universal:
+	@./$(DIST_DIR)/$(CLI)_darwin_all/$(CLI) get
 
 # ------------------------------------------
 
