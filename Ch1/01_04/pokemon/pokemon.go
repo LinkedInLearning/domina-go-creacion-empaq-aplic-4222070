@@ -263,11 +263,84 @@ type Pokemon struct {
 		} `json:"stat"`
 	} `json:"stats"`
 	Types []struct {
-		Slot int `json:"slot"`
-		Type struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"type"`
+		Slot int  `json:"slot"`
+		Type Type `json:"type"`
 	} `json:"types"`
 	Weight int `json:"weight"`
+}
+
+type Type struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type TypeSearch struct {
+	Count    int    `json:"count"`
+	Next     any    `json:"next"`
+	Previous any    `json:"previous"`
+	Results  []Type `json:"results"`
+}
+
+// --------------------------------------
+
+type PokemonByType struct {
+	DamageRelations struct {
+		DoubleDamageFrom []struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"double_damage_from"`
+		DoubleDamageTo []struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"double_damage_to"`
+		HalfDamageFrom []struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"half_damage_from"`
+		HalfDamageTo []struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"half_damage_to"`
+		NoDamageFrom []struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"no_damage_from"`
+		NoDamageTo []any `json:"no_damage_to"`
+	} `json:"damage_relations"`
+	GameIndices []struct {
+		GameIndex  int `json:"game_index"`
+		Generation struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"generation"`
+	} `json:"game_indices"`
+	Generation struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"generation"`
+	ID              int `json:"id"`
+	MoveDamageClass struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"move_damage_class"`
+	Moves []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"moves"`
+	Name  string `json:"name"`
+	Names []struct {
+		Language struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"language"`
+		Name string `json:"name"`
+	} `json:"names"`
+	PastDamageRelations []any `json:"past_damage_relations"`
+	Pokemon             []struct {
+		Pokemon struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"pokemon"`
+		Slot int `json:"slot"`
+	} `json:"pokemon"`
 }

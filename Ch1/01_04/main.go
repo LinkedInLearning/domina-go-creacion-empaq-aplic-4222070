@@ -1,6 +1,6 @@
 package main
 
-import "github.com/linkedinlearning/domina-go/clis/cmd"
+import "github.com/linkedinlearning/domina-go/prompts/cmd"
 
 func main() {
 	cmd.Execute()
